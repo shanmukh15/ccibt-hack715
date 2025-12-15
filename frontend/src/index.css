@@ -1,0 +1,311 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+  --color-bg-primary: #0f172a;
+  --color-bg-secondary: #1e293b;
+  --color-border: #334155;
+  --color-accent-primary: #6366f1;
+  /* Indigo 500 */
+  --color-accent-hover: #4f46e5;
+  /* Indigo 600 */
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-bubble-user: #4f46e5;
+  --color-bubble-bot: #1e293b;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 15px rgba(99, 102, 241, 0.2);
+
+  --radius-lg: 1rem;
+  --radius-msg: 1.2rem;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary-bg: #f8f9fa;
+  --secondary-bg: #ffffff;
+  --tertiary-bg: #e9ecef;
+  --primary-accent: #007bff;
+  --secondary-accent: #58a6ff;
+  --primary-text: #18191a;
+  --secondary-text: #495057;
+  --border-color: #dee2e6;
+  --error-color: #dc3545;
+  --font-family: 'Inter', sans-serif;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+body {
+  font-family: var(--font-family);
+  background-color: var(--primary-bg);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: var(--primary-text);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--tertiary-bg);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ced4da;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 60%);
+}
+
+.main-content {
+  width: 100%;
+  max-width: 900px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chat Interface */
+.chat-interface {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem;
+}
+
+/* Header */
+.chat-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding-top: 1rem;
+}
+
+.chat-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #818cf8, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 0.25rem;
+}
+
+.chat-header p {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Messages Area */
+.messages-area {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.message-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.message-row-user {
+  flex-direction: row-reverse;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.message-row-user .avatar {
+  background: var(--color-accent-primary);
+  color: white;
+  border: none;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+}
+
+.message-bubble {
+  max-width: 80%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-msg);
+  background: var(--color-bubble-bot);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
+  border-top-left-radius: 4px;
+  position: relative;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.feedback-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.feedback-bar.below {
+  align-self: flex-start; /* sit under the bubble, left-aligned */
+}
+
+.feedback-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.feedback-icon:hover {
+  border-color: var(--color-border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.feedback-icon.selected {
+  color: var(--color-text-primary);
+}
+
+.feedback-icon.like.selected {
+  border-color: #22c55e; /* green-500 */
+  background: rgba(34, 197, 94, 0.18);
+}
+
+.feedback-icon.like.selected svg {
+  color: #22c55e;
+}
+
+.feedback-icon.dislike.selected {
+  border-color: #ef4444; /* red-500 */
+  background: rgba(239, 68, 68, 0.18);
+}
+
+.feedback-icon.dislike.selected svg {
+  color: #ef4444;
+}
+
+.feedback-icon:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.35);
+}
+
+.message-row-user .message-bubble {
+  background: var(--color-bubble-user);
+  color: white;
+  border-top-left-radius: var(--radius-msg);
+  border-top-right-radius: 4px;
+}
+
+.timestamp {
+  display: block;
+  font-size: 0.7rem;
+  margin-top: 0.4rem;
+  opacity: 0.6;
+  text-align: right;
+}
+
+.loading-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  min-width: 60px;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: var(--color-accent-primary);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
