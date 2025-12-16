@@ -1,15 +1,8 @@
-import axios from 'axios';
-
 // In development, Vite proxys /api to backend. 
 // In production, we assume same origin or configured base URL.
-const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || '/api',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
-
-const API_BASE_URL = "http://localhost:8000";
+const dev_url = "http://localhost:8000";
+const prod_url = "https://us-central1-aiplatform.googleapis.com/v1/projects/ccibt-hack25ww7-715/locations/us-central1/reasoningEngines/8212069828928733184/";
+const API_BASE_URL = process.env.NODE_ENV === "development" ? dev_url : prod_url;
 
 export interface Message {
   role: "user" | "assistant";
