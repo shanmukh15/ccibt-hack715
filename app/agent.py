@@ -14,24 +14,54 @@
 # limitations under the License.
 
 import datetime
+import os
 from zoneinfo import ZoneInfo
 
 from google.adk.agents import Agent
 from google.adk.apps.app import App
 
-from .agents.prompts import GLOBAL_INSTRUCTION, ORCHESTRATOR_INSTRUCTION, SERVICE_INSTRUCTION, ACTION_INSTRUCTION, RECOMMENDATION_INSTRUCTION
-from .agents.user_registry import set_user_plan
+from .agents.config import AGENT_MODEL, API_KEY
 from .agents.entitlement_tools import check_entitlement
+from .agents.prompts import (
+    ACTION_INSTRUCTION,
+    GLOBAL_INSTRUCTION,
+    ORCHESTRATOR_INSTRUCTION,
+    RECOMMENDATION_INSTRUCTION,
+    SERVICE_INSTRUCTION,
+)
 from .agents.state import update_session_state
-from .agents.config import AGENT_MODEL
+from .agents.user_registry import set_user_plan
 
-import os
-import google.auth
 
-_, project_id = google.auth.default()
-os.environ["GOOGLE_CLOUD_PROJECT"] = project_id
-os.environ["GOOGLE_CLOUD_LOCATION"] = "global"
-os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
+def _configure_platform() -> None:
+    """Configure authentication depending on environment variables."""
+
+    api_key = API_KEY
+    if api_key:
+        # Allow overriding runtime API key without forcing Vertex AI defaults.
+        os.environ.setdefault("GOOGLE_API_KEY", api_key)
+        os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "us-central1")
+        os.environ.pop("GOOGLE_GENAI_USE_VERTEXAI", False)
+        return
+
+    # Vertex AI (ADC) fallback for Google Cloud deployments.
+    try:
+        import google.auth
+
+        _, project_id = google.auth.default()
+    except Exception as exc:  # pragma: no cover - defensive fallback
+        raise RuntimeError(
+            "Failed to obtain Google Cloud credentials. Set the API_KEY "
+            "environment variable for direct Gemini API access or configure "
+            "Application Default Credentials."
+        ) from exc
+
+    os.environ.setdefault("GOOGLE_CLOUD_PROJECT", project_id)
+    os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "global")
+    os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
+
+
+_configure_platform()
 
 
 def update_user_dataplan(*, uid: str, plan: str, session_id: str | None = None) -> str:

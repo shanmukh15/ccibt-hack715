@@ -13,34 +13,34 @@
 # limitations under the License.
 
 steps:
-  - name: "python:3.12-slim"
-    id: install-dependencies
-    entrypoint: /bin/bash
+  - name: gcr.io/cloud-builders/docker
+    id: build-image
     args:
-      - "-c"
-      - |
-        pip install uv==0.8.13 --user && uv sync --locked
-    env:
-      - 'PATH=/usr/local/bin:/usr/bin:~/.local/bin'
+      - "build"
+      - "-t"
+      - "${_IMAGE}"
+      - "."
 
-  - name: "python:3.12-slim"
-    id: deploy-staging
-    entrypoint: /bin/bash
+  - name: gcr.io/cloud-builders/docker
+    id: push-image
     args:
-      - "-c"
-      - |
-        uv export --no-hashes --no-sources --no-header --no-dev --no-emit-project --no-annotate --locked > app/app_utils/.requirements.txt
-        uv run python -m app.app_utils.deploy \
-          --project ${_STAGING_PROJECT_ID} \
-          --location ${_REGION} \
-          --source-packages=./app \
-          --entrypoint-module=app.agent_engine_app \
-          --entrypoint-object=agent_engine \
-          --requirements-file=app/app_utils/.requirements.txt \
-          --service-account=${_APP_SERVICE_ACCOUNT_STAGING} \
-          --set-env-vars="COMMIT_SHA=${COMMIT_SHA},LOGS_BUCKET_NAME=${_LOGS_BUCKET_NAME_STAGING}"
-    env:
-      - 'PATH=/usr/local/bin:/usr/bin:~/.local/bin'
+      - "push"
+      - "${_IMAGE}"
+
+  - name: gcr.io/cloud-builders/gcloud
+    id: deploy-staging
+    args:
+      - "run"
+      - "deploy"
+      - "${_SERVICE_NAME}"
+      - "--image"
+      - "${_IMAGE}"
+      - "--region"
+      - "${_REGION}"
+      - "--allow-unauthenticated"
+      - "--service-account=${_APP_SERVICE_ACCOUNT_STAGING}"
+      - "--set-env-vars"
+      - "ALLOWED_ORIGINS=${_ALLOWED_ORIGINS},FRONTEND_DIST=/app/static,API_MODEL=${_API_MODEL},API_KEY=${_API_KEY}"
 
 
   - name: gcr.io/cloud-builders/gcloud
@@ -113,6 +113,12 @@ steps:
 substitutions:
   _STAGING_PROJECT_ID: YOUR_STAGING_PROJECT_ID
   _REGION: us-central1
+  _SERVICE_NAME: ccibt-hack715
+  _REPOSITORY: app-images
+  _IMAGE: ${_REGION}-docker.pkg.dev/${_STAGING_PROJECT_ID}/${_REPOSITORY}/${_SERVICE_NAME}:${COMMIT_SHA}
+  _ALLOWED_ORIGINS: "*"
+  _API_MODEL: gemini-3-pro-preview
+  _API_KEY: ""
 
 logsBucket: gs://${PROJECT_ID}-ccibt-hack715-logs/build-logs
 options:

@@ -4,7 +4,8 @@ import uuid
 from fastapi import FastAPI, HTTPException, Query
 import asyncio
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
@@ -24,9 +25,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-session_service = InMemorySessionService()
-conversation_store: Dict[str, List[Dict[str, str]]] = {}
-session_user_profile: Dict[str, Dict[str, Any]] = {}
+# Serve frontend static files
+app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
 
 
 class CreateSessionRequest(BaseModel):
@@ -171,3 +171,8 @@ async def history(session_id: str) -> Dict[str, Any]:
     if session_id not in conversation_store:
         raise HTTPException(status_code=404, detail="Unknown session_id")
     return {"messages": conversation_store[session_id]}
+
+
+@app.get("/")
+async def read_index():
+    return FileResponse("frontend/dist/index.html")

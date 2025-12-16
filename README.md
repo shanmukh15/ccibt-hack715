@@ -11,7 +11,6 @@ This project is organized as follows:
 ccibt-hack715/
 ├── app/                 # Core application code
 │   ├── agent.py         # Main agent logic
-│   ├── agent_engine_app.py # Agent Engine application logic
 │   └── app_utils/       # App utilities and helpers
 ├── .cloudbuild/         # CI/CD pipeline configurations for Google Cloud Build
 ├── deployment/          # Infrastructure and deployment scripts
@@ -48,8 +47,7 @@ make install && make playground
 | -------------------- | ------------------------------------------------------------------------------------------- |
 | `make install`       | Install all required dependencies using uv                                                  |
 | `make playground`    | Launch local development environment for testing agent |
-| `make deploy`        | Deploy agent to Agent Engine |
-| `make register-gemini-enterprise` | Register deployed agent to Gemini Enterprise ([docs](https://googlecloudplatform.github.io/agent-starter-pack/cli/register_gemini_enterprise.html)) |
+| `make deploy`        | Build and deploy the Cloud Run service (frontend + backend) |
 | `make test`          | Run unit and integration tests                                                              |
 | `make lint`          | Run code quality checks (codespell, ruff, mypy)                                             |
 | `make setup-dev-env` | Set up development environment resources using Terraform                         |

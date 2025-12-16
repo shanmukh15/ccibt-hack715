@@ -1,6 +1,17 @@
 # ==============================================================================
-# Installation & Setup
+# Configuration
 # ==============================================================================
+
+PROJECT_ID ?= $(shell gcloud config get-value project 2>/dev/null)
+REGION ?= us-central1
+SERVICE_NAME ?= ccibt-hack715
+ALLOWED_ORIGINS ?= *
+API_MODEL ?=
+API_KEY ?=
+
+# ==============================================================================
+# Installation & Setup
+# ============================================================================== 
 
 # Install dependencies using uv package manager
 install:
@@ -26,16 +37,12 @@ playground:
 # Backend Deployment Targets
 # ==============================================================================
 
-# Deploy the agent remotely
+# Deploy the combined frontend + backend to Cloud Run
 deploy:
-	# Export dependencies to requirements file using uv export.
-	(uv export --no-hashes --no-header --no-dev --no-emit-project --no-annotate > app/app_utils/.requirements.txt 2>/dev/null || \
-	uv export --no-hashes --no-header --no-dev --no-emit-project > app/app_utils/.requirements.txt) && \
-	uv run -m app.app_utils.deploy \
-		--source-packages=./app \
-		--entrypoint-module=app.agent_engine_app \
-		--entrypoint-object=agent_engine \
-		--requirements-file=app/app_utils/.requirements.txt
+	chmod +x scripts/deploy_to_cloud_run.sh
+	PROJECT_ID=$(PROJECT_ID) REGION=$(REGION) SERVICE_NAME=$(SERVICE_NAME) \
+	ALLOWED_ORIGINS=$(ALLOWED_ORIGINS) API_MODEL=$(API_MODEL) API_KEY=$(API_KEY) \
+	scripts/deploy_to_cloud_run.sh
 
 # Alias for 'make deploy' for backward compatibility
 backend: deploy
