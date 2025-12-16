@@ -28,6 +28,10 @@ app.add_middleware(
 # Serve frontend static files
 app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
 
+session_service = InMemorySessionService()
+conversation_store: Dict[str, List[Dict[str, Any]]] = {}
+session_user_profile: Dict[str, Dict[str, Any]] = {}
+
 
 class CreateSessionRequest(BaseModel):
     user_id: str
@@ -57,9 +61,7 @@ def _extract_text(event: Any) -> str:
 
 @app.post("/session")
 async def create_session(req: CreateSessionRequest) -> Dict[str, str]:
-    sess = await asyncio.to_thread(
-        session_service.create_session_sync, user_id=req.user_id, app_name="web"
-    )
+    sess = await session_service.create_session(user_id=req.user_id, app_name="web")
     conversation_store[sess.id] = []
     profile = get_user_profile(req.user_id)
     if profile:
